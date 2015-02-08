@@ -2,10 +2,10 @@
 <widget id="com.ionicframework.findparkmobileapp379748" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>FindParkMobileApp</name>
   <description>
-        An Ionic Framework and Cordova project.
+      findPark is a mobile app which aim is to help people on finding parking in big cities.
     </description>
-  <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
+  <author email="riccardo.lorenzon@gmail.com" href="riccardolorenzon.github.io">
+      riccardo lorenzon
     </author>
   <content src="index.html"/>
   <access origin="*"/>
