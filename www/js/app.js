@@ -1,11 +1,9 @@
-// Ionic Starter App
-
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('findPark', ['ionic', 'firebase', 'findPark.controllers'])
+var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.controllers', 'ngRoute'])
 
-    .run(function($ionicPlatform, $rootScope, $firebaseAuth, $firebase, $window, $ionicLoading) {
+    .run(function($ionicPlatform, $rootScope, $firebase, $window, $ionicLoading, $firebaseSimpleLogin) {
         $ionicPlatform.ready(function() {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -16,10 +14,10 @@ angular.module('findPark', ['ionic', 'firebase', 'findPark.controllers'])
                 StatusBar.styleDefault();
             }
 
-            $rootScope.userEmail = "riccardo.lorenzon@gmail.com";
-            $rootScope.baseUrl = 'https://torid-fire-6940.firebaseio.com/';
-            var authRef = new Firebase($rootScope.baseUrl);
-            $rootScope.auth = $firebaseAuth(authRef);
+            $rootScope.userEmail = null;
+            $rootScope.baseUrl = 'https://findPark.firebaseio.com/';
+            var firebaseRef = new Firebase($rootScope.baseUrl);
+            $rootScope.auth = $firebaseSimpleLogin(firebaseRef);
 
             $rootScope.show = function(text) {
                 $rootScope.loading = $ionicLoading.show({
@@ -42,78 +40,23 @@ angular.module('findPark', ['ionic', 'firebase', 'findPark.controllers'])
                 }, 1999);
             };
 
-            $rootScope.logout = function() {
-                $rootScope.auth.$logout();
-                $rootScope.checkSession();
-            };
-
             $rootScope.checkSession = function() {
-                var auth = new FirebaseSimpleLogin(authRef, function(error, user) {
-                    if (error) {
-                        // no action yet.. redirect to default route
-                        $rootScope.userEmail = null;
-                        $window.location.href = '#/auth/signin';
-                    } else if (user) {
-                        // user authenticated with Firebase
-                        $rootScope.userEmail = user.email;
-                        $window.location.href = ('#/bucket/list');
-                    } else {
-                        // user is logged out
-                        $rootScope.userEmail = null;
-                        $window.location.href = '#/auth/signin';
-                    }
-                });
+                return;
             }
         });
-    })
-
-    .config(function($stateProvider, $urlRouterProvider) {
-        $stateProvider
-            .state('auth', {
-                url: "/auth",
-                abstract: true,
-                templateUrl: "templates/auth.html"
-            })
-            .state('auth.signin', {
-                url: '/signin',
-                views: {
-                    'auth-signin': {
-                        templateUrl: 'templates/auth-signin.html',
-                        controller: 'SignInCtrl'
-                    }
-                }
-            })
-            .state('auth.signup', {
-                url: '/signup',
-                views: {
-                    'auth-signup': {
-                        templateUrl: 'templates/auth-signup.html',
-                        controller: 'SignUpCtrl'
-                    }
-                }
-            })
-            .state('bucket', {
-                url: "/bucket",
-                abstract: true,
-                templateUrl: "templates/bucket.html"
-            })
-            .state('bucket.list', {
-                url: '/list',
-                views: {
-                    'bucket-list': {
-                        templateUrl: 'templates/bucket-list.html',
-                        controller: 'myListCtrl'
-                    }
-                }
-            })
-            .state('bucket.completed', {
-                url: '/completed',
-                views: {
-                    'bucket-completed': {
-                        templateUrl: 'templates/bucket-completed.html',
-                        controller: 'completedCtrl'
-                    }
-                }
-            })
-        $urlRouterProvider.otherwise('/auth/signin');
- });
+    });
+findParkApp.config(['$routeProvider',
+    function($routeProvider) {
+        $routeProvider.
+            when('/auth/signin', {
+                templateUrl: 'templates/auth-signin.html',
+                controller: 'SignInCtrl'
+            }).
+            when('/bucket/list', {
+                templateUrl: 'templates/bucket-list.html',
+                controller: 'myListCtrl'
+            }).
+            otherwise({
+                redirectTo: '/auth/signin'
+            });
+    }]);

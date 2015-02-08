@@ -39,10 +39,19 @@ angular.module('findPark.controllers', [])
         }
     ])
     .controller('SignInCtrl', [
-        '$scope', '$rootScope', '$firebaseAuth', '$window',
-        function ($scope, $rootScope, $firebaseAuth, $window) {
-            // check session
-            $rootScope.checkSession();
+        '$scope', '$rootScope', '$window',
+        function ($scope, $rootScope, $window) {
+
+            // Logs a user in with inputted provider
+            $scope.login = function(provider) {
+                $scope.auth.$login(provider);
+            };
+
+            // Logs a user out
+            $scope.logout = function() {
+                $scope.auth.$logout();
+            };
+
             $scope.user = {
                 email: "",
                 password: ""
@@ -78,13 +87,25 @@ angular.module('findPark.controllers', [])
                             $rootScope.notify('Oops something went wrong. Please try again later');
                         }
                     });
-            }
+            };
+            // Upon successful login, set the user object
+            $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
+                $scope.user = user;
+            });
+            // Upon successful logout, reset the user object
+            $rootScope.$on("$firebaseSimpleLogin:logout", function(event) {
+                $scope.user = null;
+            });
+            // Log any login-related errors to the console
+            $rootScope.$on("$firebaseSimpleLogin:error", function(event, error) {
+                console.log("Error logging user in: ", error);
+            });
         }
     ])
     .controller('myListCtrl', function($rootScope, $scope, $window, $ionicModal, $firebase) {
         $rootScope.show("Please wait... Processing");
         $scope.list = [];
-        var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
+        var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
         bucketListRef.on('value', function(snapshot) {
             var data = snapshot.val();
 
@@ -117,7 +138,7 @@ angular.module('findPark.controllers', [])
 
         $scope.markCompleted = function(key) {
             $rootScope.show("Please wait... Updating List");
-            var itemRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail) + '/' + key);
+            var itemRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail) + '/' + key;
             itemRef.update({
                 isCompleted: true
             }, function(error) {
@@ -133,7 +154,7 @@ angular.module('findPark.controllers', [])
 
         $scope.deleteItem = function(key) {
             $rootScope.show("Please wait... Deleting from List");
-            var itemRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
+            var itemRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
             bucketListRef.child(key).remove(function(error) {
                 if (error) {
                     $rootScope.hide();
@@ -170,7 +191,7 @@ angular.module('findPark.controllers', [])
                 updated: Date.now()
             };
 
-            var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
+            var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
             $firebase(bucketListRef).$add(form);
             $rootScope.hide();
         };
@@ -179,7 +200,7 @@ angular.module('findPark.controllers', [])
         $rootScope.show("Please wait... Processing");
         $scope.list = [];
 
-        var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
+        var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
         bucketListRef.on('value', function(snapshot) {
             $scope.list = [];
             var data = snapshot.val();
@@ -203,7 +224,7 @@ angular.module('findPark.controllers', [])
 
         $scope.deleteItem = function(key) {
             $rootScope.show("Please wait... Deleting from List");
-            var itemRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
+            var itemRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
             bucketListRef.child(key).remove(function(error) {
                 if (error) {
                     $rootScope.hide();
