@@ -4,6 +4,9 @@
         <button class="button button-clear" ng-click="logout()">Logout</button>
     </ion-header-bar>
     <ion-content class="has-header padding" has-tabs="true" on-refresh="onRefresh()">
+        <button class="button button-clear" ng-click="newTask()">New</button>
+        <h1 class="title">My Bucket List</h1>
+        <button class="button button-clear" ng-click="logout()">Logout</button>
         <div class="card" ng-repeat="item in list" id="{{item.key}}" >
             <div class="item item-text-wrap">
                 <span>{{ item.item }}</span>

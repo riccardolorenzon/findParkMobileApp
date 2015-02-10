@@ -88,14 +88,15 @@ angular.module('findPark.controllers', [])
                         }
                     });
             };
+
             $scope.facebookLogin = function(){
                 $rootScope.show("redirecting to Facebook");
                 var firebase = new Firebase($rootScope.baseUrl);
                 firebase.authWithOAuthPopup("facebook", function(error, authData) {
                     if (error) {
-                        rootscope.show("Login Failed!", error)
+                        $rootScope.notify("Login Failed!", error);
                     } else {
-                        rootscope.show("Authenticated successfully with payload:", authData);
+                        $rootScope.notify("Authenticated successfully with payload:", authData);
                     }
                 })
                     .then(function (user){
@@ -141,9 +142,7 @@ angular.module('findPark.controllers', [])
         var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
         bucketListRef.on('value', function(snapshot) {
             var data = snapshot.val();
-
             $scope.list = [];
-
             for (var key in data) {
                 if (data.hasOwnProperty(key)) {
                     if (data[key].isCompleted == false) {
@@ -167,6 +166,12 @@ angular.module('findPark.controllers', [])
 
         $scope.newTask = function() {
             $scope.newTemplate.show();
+        };
+
+        // Logs a user out
+        $scope.logout = function() {
+            var firebase = new Firebase($rootScope.baseUrl);
+            firebase.unauth();
         };
 
         $scope.markCompleted = function(key) {
