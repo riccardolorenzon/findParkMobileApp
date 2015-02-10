@@ -71,7 +71,7 @@ findParkApp.config(['$routeProvider',
     }]);
 findParkApp.config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
+        key: 'AIzaSyDIxE6AbpYr5b5LgCfxcynEnX3e4QZgNjs',
         v: '3.17',
         libraries: 'weather,geometry,visualization'
     });
