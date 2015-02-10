@@ -50,6 +50,8 @@ angular.module('findPark.controllers', [])
         '$scope', '$rootScope', '$window',
         function ($scope, $rootScope, $window) {
 
+            //TODO check if an auth session is already open
+
             // Logs a user in with inputted provider
             $scope.login = function(provider) {
                 $scope.auth.$login(provider);
@@ -79,7 +81,7 @@ angular.module('findPark.controllers', [])
                     .then(function (user) {
                         $rootScope.hide();
                         $rootScope.userEmail = user.email;
-                        $window.location.href = ('#/bucket/list');
+                        $window.location.href = ('#/parking/map');
                     }, function (error) {
                         $rootScope.hide();
                         if (error.code == 'INVALID_EMAIL') {
@@ -107,7 +109,7 @@ angular.module('findPark.controllers', [])
                     } else {
                         $rootScope.notify("Authenticated successfully with payload:", authData);
                         $rootScope.hide();
-                        $window.location.href = ('#/bucket/list');
+                        $window.location.href = ('#/parking/map');
                     }
                 })}
             // Upon successful login, set the user object
@@ -262,4 +264,15 @@ angular.module('findPark.controllers', [])
                 }
             });
         };
-    });
+    })
+    .controller("mapCtrl", function($scope, uiGmapGoogleMapApi) {
+            // Do stuff with your $scope.
+            // Note: Some of the directives require at least something to be defined originally!
+            // e.g. $scope.markers = []
+
+            // uiGmapGoogleMapApi is a promise.
+            // The "then" callback function provides the google.maps object.
+            uiGmapGoogleMapApi.then(function(maps) {
+                $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+            });
+        });

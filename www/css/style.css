@@ -18,3 +18,5 @@
 .ion-checkmark-circled.icon-actions.margin{
     margin-right: 35px;
 }
+
+.angular-google-map-container { height: 400px; }

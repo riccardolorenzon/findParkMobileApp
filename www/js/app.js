@@ -1,7 +1,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.controllers', 'ngRoute'])
+var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.controllers', 'ngRoute', 'uiGmapgoogle-maps'])
 
     .run(function($ionicPlatform, $rootScope, $firebase, $window, $ionicLoading, $firebaseSimpleLogin) {
         $ionicPlatform.ready(function() {
@@ -61,7 +61,18 @@ findParkApp.config(['$routeProvider',
                 templateUrl: 'templates/bucket-list.html',
                 controller: 'myListCtrl'
             }).
+            when('/parking/map', {
+                templateUrl: 'templates/map.html',
+                controller: 'mapCtrl'
+            }).
             otherwise({
                 redirectTo: '/auth/signin'
             });
     }]);
+findParkApp.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        //    key: 'your api key',
+        v: '3.17',
+        libraries: 'weather,geometry,visualization'
+    });
+});
