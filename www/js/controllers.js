@@ -1,3 +1,11 @@
+function escapeEmailAddress(email) {
+    if (!email) return false
+    // Replace '.' (not allowed in a Firebase key) with ','
+    email = email.toLowerCase();
+    email = email.replace(/\./g, ',');
+    return email.trim();
+}
+
 angular.module('findPark.controllers', [])
     .controller('SignUpCtrl', [
         '$scope', '$rootScope', '$firebaseAuth', '$window',
@@ -94,34 +102,14 @@ angular.module('findPark.controllers', [])
                 var firebase = new Firebase($rootScope.baseUrl);
                 firebase.authWithOAuthPopup("facebook", function(error, authData) {
                     if (error) {
+                        $rootScope.hide();
                         $rootScope.notify("Login Failed!", error);
                     } else {
                         $rootScope.notify("Authenticated successfully with payload:", authData);
-                    }
-                })
-                    .then(function (user){
                         $rootScope.hide();
-                        $rootScope.userEmail = user.email;
                         $window.location.href = ('#/bucket/list');
-                        },
-                          function (error) {
-                            $rootScope.hide();
-                            if (error.code == 'INVALID_EMAIL') {
-                                $rootScope.notify('Invalid Email Address');
-                            }
-                            else if (error.code == 'INVALID_PASSWORD') {
-                                $rootScope.notify('Invalid Password');
-                            }
-                            else if (error.code == 'INVALID_USER') {
-                                $rootScope.notify('Invalid User');
-                            }
-                            else {
-                                $rootScope.notify('Oops something went wrong. Please try again later');
-                            }
                     }
-                );
-
-            };
+                })}
             // Upon successful login, set the user object
             $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
                 $scope.user = user;
@@ -136,10 +124,10 @@ angular.module('findPark.controllers', [])
             });
         }
     ])
-    .controller('myListCtrl', function($rootScope, $scope, $window, $ionicModal, $firebase) {
+    .controller('myListCtrl', function($rootScope, $scope, $window, $ionicModal, $firebase, $location) {
         $rootScope.show("Please wait... Processing");
         $scope.list = [];
-        var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
+        var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
         bucketListRef.on('value', function(snapshot) {
             var data = snapshot.val();
             $scope.list = [];
@@ -172,11 +160,12 @@ angular.module('findPark.controllers', [])
         $scope.logout = function() {
             var firebase = new Firebase($rootScope.baseUrl);
             firebase.unauth();
+            $location.path("/");
         };
 
         $scope.markCompleted = function(key) {
             $rootScope.show("Please wait... Updating List");
-            var itemRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail) + '/' + key;
+            var itemRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail)) + '/' + key;
             itemRef.update({
                 isCompleted: true
             }, function(error) {
@@ -192,7 +181,7 @@ angular.module('findPark.controllers', [])
 
         $scope.deleteItem = function(key) {
             $rootScope.show("Please wait... Deleting from List");
-            var itemRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
+            var itemRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
             bucketListRef.child(key).remove(function(error) {
                 if (error) {
                     $rootScope.hide();
@@ -229,7 +218,7 @@ angular.module('findPark.controllers', [])
                 updated: Date.now()
             };
 
-            var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
+            var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
             $firebase(bucketListRef).$add(form);
             $rootScope.hide();
         };
@@ -238,7 +227,7 @@ angular.module('findPark.controllers', [])
         $rootScope.show("Please wait... Processing");
         $scope.list = [];
 
-        var bucketListRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
+        var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
         bucketListRef.on('value', function(snapshot) {
             $scope.list = [];
             var data = snapshot.val();
@@ -262,7 +251,7 @@ angular.module('findPark.controllers', [])
 
         $scope.deleteItem = function(key) {
             $rootScope.show("Please wait... Deleting from List");
-            var itemRef = new Firebase($rootScope.baseUrl + $rootScope.userEmail);
+            var itemRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
             bucketListRef.child(key).remove(function(error) {
                 if (error) {
                     $rootScope.hide();

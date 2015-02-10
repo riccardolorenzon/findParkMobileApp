@@ -53,6 +53,10 @@ findParkApp.config(['$routeProvider',
                 templateUrl: 'templates/auth-signin.html',
                 controller: 'SignInCtrl'
             }).
+            when('/signup', {
+                templateUrl: 'templates/auth-signup.html',
+                controller: 'SignUpCtrl'
+            }).
             when('/bucket/list', {
                 templateUrl: 'templates/bucket-list.html',
                 controller: 'myListCtrl'
