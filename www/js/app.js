@@ -18,6 +18,7 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
             $rootScope.baseUrl = 'https://findPark.firebaseio.com/';
             var firebaseRef = new Firebase($rootScope.baseUrl);
             $rootScope.auth = $firebaseSimpleLogin(firebaseRef);
+            $rootScope.firebaseRef = firebaseRef
 
             $rootScope.show = function(text) {
                 $rootScope.loading = $ionicLoading.show({

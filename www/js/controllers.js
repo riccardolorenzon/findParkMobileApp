@@ -88,6 +88,39 @@ angular.module('findPark.controllers', [])
                         }
                     });
             };
+            $scope.facebookLogin = function(){
+                $rootScope.show("redirecting to Facebook");
+                var firebase = new Firebase($rootScope.baseUrl);
+                firebase.authWithOAuthPopup("facebook", function(error, authData) {
+                    if (error) {
+                        rootscope.show("Login Failed!", error)
+                    } else {
+                        rootscope.show("Authenticated successfully with payload:", authData);
+                    }
+                })
+                    .then(function (user){
+                        $rootScope.hide();
+                        $rootScope.userEmail = user.email;
+                        $window.location.href = ('#/bucket/list');
+                        },
+                          function (error) {
+                            $rootScope.hide();
+                            if (error.code == 'INVALID_EMAIL') {
+                                $rootScope.notify('Invalid Email Address');
+                            }
+                            else if (error.code == 'INVALID_PASSWORD') {
+                                $rootScope.notify('Invalid Password');
+                            }
+                            else if (error.code == 'INVALID_USER') {
+                                $rootScope.notify('Invalid User');
+                            }
+                            else {
+                                $rootScope.notify('Oops something went wrong. Please try again later');
+                            }
+                    }
+                );
+
+            };
             // Upon successful login, set the user object
             $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
                 $scope.user = user;
