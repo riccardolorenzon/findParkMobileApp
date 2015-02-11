@@ -57,10 +57,6 @@ findParkApp.config(['$routeProvider',
                 templateUrl: 'templates/auth-signup.html',
                 controller: 'SignUpCtrl'
             }).
-            when('/bucket/list', {
-                templateUrl: 'templates/bucket-list.html',
-                controller: 'myListCtrl'
-            }).
             when('/parking/map', {
                 templateUrl: 'templates/map.html',
                 controller: 'mapCtrl'
