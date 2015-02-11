@@ -35,6 +35,7 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
             };
 
             $rootScope.notify = function(text) {
+
                 $rootScope.show(text);
                 $window.setTimeout(function() {
                     $rootScope.hide();
