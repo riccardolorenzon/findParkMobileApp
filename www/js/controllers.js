@@ -50,21 +50,19 @@ angular.module('findPark.controllers', [])
         '$scope', '$rootScope', '$window',
         function ($scope, $rootScope, $window, $firebaseSimpleLogin) {
 
-            //TODO check if an auth session is already open
-
             // Logs a user out
             $scope.logout = function() {
                 $scope.auth.$logout();
+                $scope.user = null;
             };
 
             // Create a Firebase Simple Login object
             $scope.auth = $rootScope.auth;
 
-            // Initially set no user to be logged in
-            $scope.user = null;
-
             // Logs a user in with inputted provider
             $scope.login = function(provider) {
+                // Initially set no user to be logged in
+                $scope.user = null;
                 var credentials = {};
                 if (provider == 'password') {
                     if ((this.user.email == null) || (this.user.password == null))
@@ -95,23 +93,22 @@ angular.module('findPark.controllers', [])
                 if (provider == 'facebook') {
                     var url = 'https://findPark.firebaseio.com/';
                     var firebaseRef = new Firebase(url);
-                    firebaseRef.onAuth(function(authData) {
-                        $window.location.href = ('#/parking/map');
-                        return;
-                    });
+                    firebaseRef.onAuth(authDataCallback);
                     firebaseRef.authWithOAuthRedirect(provider, function(error) {
                         if (error) {
                             console.log("Login Failed!", error);
-                        } else {
-
-                            console.log("Login OK!", error);
-                            // We'll never get here, as the page will redirect on success.
-                            $rootScope.hide();
-                            $window.location.href = ('#/parking/map');
                         }
                     });
                 }
             };
+
+            function authDataCallback(authData) {
+                if (authData) {
+                    $scope.user = authData.uid;
+                    $window.location.href = ('#/parking/map');
+                    
+                }
+            }
 
             // Logs a user out
             $scope.logout = function() {

@@ -44,7 +44,7 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
             };
 
             $rootScope.checkSession = function() {
-                return;
+
             }
         });
     });
