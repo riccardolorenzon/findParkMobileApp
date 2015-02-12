@@ -48,13 +48,69 @@ angular.module('findPark.controllers', [])
     ])
     .controller('SignInCtrl', [
         '$scope', '$rootScope', '$window',
-        function ($scope, $rootScope, $window) {
+        function ($scope, $rootScope, $window, $firebaseSimpleLogin) {
 
             //TODO check if an auth session is already open
 
+            // Logs a user out
+            $scope.logout = function() {
+                $scope.auth.$logout();
+            };
+
+            // Create a Firebase Simple Login object
+            $scope.auth = $rootScope.auth;
+
+            // Initially set no user to be logged in
+            $scope.user = null;
+
             // Logs a user in with inputted provider
             $scope.login = function(provider) {
-                $scope.auth.$login(provider);
+                var credentials = {};
+                if (provider == 'password') {
+                    if ((this.user.email == null) || (this.user.password == null))
+                        return;
+                    credentials.email = this.user.email;
+                    credentials.password = this.user.password;
+                    $rootScope.auth.$login(provider, credentials)
+                        .then(function (user) {
+                            $rootScope.hide();
+                            $rootScope.userEmail = user.email;
+                            $window.location.href = ('#/parking/map');
+                        }, function (error) {
+                            $rootScope.hide();
+                            if (error.code == 'INVALID_EMAIL') {
+                                $rootScope.notify('Invalid Email Address');
+                            }
+                            else if (error.code == 'INVALID_PASSWORD') {
+                                $rootScope.notify('Invalid Password');
+                            }
+                            else if (error.code == 'INVALID_USER') {
+                                $rootScope.notify('Invalid User');
+                            }
+                            else {
+                                $rootScope.notify('Oops something went wrong. Please try again later');
+                            }
+                        });
+                }
+                if (provider == 'facebook') {
+                    var url = 'https://findPark.firebaseio.com/';
+                    var firebaseRef = new Firebase(url);
+                    firebaseRef.onAuth(function(authData) {
+                        $window.location.href = ('#/parking/map');
+                        return;
+                    });
+                    firebaseRef.authWithOAuthRedirect(provider, function(error) {
+                        if (error) {
+                            console.log("Login Failed!", error);
+                        } else {
+
+                            console.log("Login OK!", error);
+                            // We'll never get here, as the page will redirect on success.
+                            $rootScope.hide();
+                            $window.location.href = ('#/parking/map');
+                        }
+                    });
+                }
             };
 
             // Logs a user out
@@ -62,64 +118,16 @@ angular.module('findPark.controllers', [])
                 $scope.auth.$logout();
             };
 
-            $scope.user = {
-                email: "",
-                password: ""
-            };
-            $scope.validateUser = function () {
-                $rootScope.show('Please wait.. Authenticating');
-                var email = this.user.email;
-                var password = this.user.password;
-                if (!email || !password) {
-                    $rootScope.notify("Please enter valid credentials");
-                    return false;
-                }
-                $rootScope.auth.$login('password', {
-                    email: email,
-                    password: password
-                })
-                    .then(function (user) {
-                        $rootScope.hide();
-                        $rootScope.userEmail = user.email;
-                        $window.location.href = ('#/parking/map');
-                    }, function (error) {
-                        $rootScope.hide();
-                        if (error.code == 'INVALID_EMAIL') {
-                            $rootScope.notify('Invalid Email Address');
-                        }
-                        else if (error.code == 'INVALID_PASSWORD') {
-                            $rootScope.notify('Invalid Password');
-                        }
-                        else if (error.code == 'INVALID_USER') {
-                            $rootScope.notify('Invalid User');
-                        }
-                        else {
-                            $rootScope.notify('Oops something went wrong. Please try again later');
-                        }
-                    });
-            };
-
-            $scope.facebookLogin = function(){
-                $rootScope.show("redirecting to Facebook");
-                var firebase = new Firebase($rootScope.baseUrl);
-                firebase.authWithOAuthPopup("facebook", function(error, authData) {
-                    if (error) {
-                        $rootScope.hide();
-                        $rootScope.notify("Login Failed!", error);
-                    } else {
-                        $rootScope.notify("Authenticated successfully with payload:", authData);
-                        $rootScope.hide();
-                        $window.location.href = ('#/parking/map');
-                    }
-                })}
             // Upon successful login, set the user object
             $rootScope.$on("$firebaseSimpleLogin:login", function(event, user) {
                 $scope.user = user;
             });
+
             // Upon successful logout, reset the user object
             $rootScope.$on("$firebaseSimpleLogin:logout", function(event) {
                 $scope.user = null;
             });
+
             // Log any login-related errors to the console
             $rootScope.$on("$firebaseSimpleLogin:error", function(event, error) {
                 console.log("Error logging user in: ", error);

@@ -21,6 +21,7 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
             $rootScope.firebaseRef = firebaseRef
 
             $rootScope.show = function(text) {
+
                 $rootScope.loading = $ionicLoading.show({
                     content: text ? text : 'Loading..',
                     animation: 'fade-in',
