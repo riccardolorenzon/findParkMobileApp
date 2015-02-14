@@ -8,8 +8,8 @@ function escapeEmailAddress(email) {
 
 angular.module('findPark.controllers', [])
     .controller('SignUpCtrl', [
-        '$scope', '$rootScope', '$firebaseAuth', '$window',
-        function ($scope, $rootScope, $firebaseAuth, $window) {
+        '$scope', '$rootScope', '$firebaseAuth', '$window', '$location',
+        function ($scope, $rootScope, $firebaseAuth, $window, $location) {
             $scope.user = {
                 email: "",
                 password: ""
@@ -47,8 +47,8 @@ angular.module('findPark.controllers', [])
         }
     ])
     .controller('SignInCtrl', [
-        '$scope', '$rootScope', '$window',
-        function ($scope, $rootScope, $window, $firebaseSimpleLogin) {
+        '$scope', '$rootScope', '$window', '$firebaseSimpleLogin', '$location',
+        function ($scope, $rootScope, $window, $firebaseSimpleLogin, $location) {
 
             // Logs a user out
             $scope.logout = function() {
@@ -72,6 +72,7 @@ angular.module('findPark.controllers', [])
                     $rootScope.auth.$login(provider, credentials)
                         .then(function (user) {
                             $rootScope.hide();
+                            $rootScope.user = user.email;
                             $rootScope.userEmail = user.email;
                             $window.location.href = ('#/parking/map');
                         }, function (error) {
@@ -104,9 +105,9 @@ angular.module('findPark.controllers', [])
 
             function authDataCallback(authData) {
                 if (authData) {
-                    $scope.user = authData.uid;
+                    $rootScope.user = authData.uid;
                     $window.location.href = ('#/parking/map');
-                    
+
                 }
             }
 
@@ -201,6 +202,8 @@ angular.module('findPark.controllers', [])
         };
     })
     .controller('newCtrl', function($rootScope, $scope, $window, $firebase) {
+        $rootScope.checkSession();
+
         $scope.data = {
             item: ""
         };
@@ -270,14 +273,20 @@ angular.module('findPark.controllers', [])
             });
         };
     })
-    .controller("mapCtrl", function($scope, uiGmapGoogleMapApi) {
-            // Do stuff with your $scope.
-            // Note: Some of the directives require at least something to be defined originally!
-            // e.g. $scope.markers = []
-            uiGmapGoogleMapApi.then(function(maps) {
-                $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-            });
-            // uiGmapGoogleMapApi is a promise.
-            // The "then" callback function provides the google.maps object.
+    .controller("mapCtrl", function($scope, uiGmapGoogleMapApi, $location) {
+            // check if current user is authenticated
+            var url = 'https://findPark.firebaseio.com/';
+            var firebaseRef = new Firebase(url);
+            var authData = firebaseRef.getAuth();
+            if (authData) {
+                console.log("User " + authData.uid + " is logged in with " + authData.provider);
+                uiGmapGoogleMapApi.then(function(maps) {
+                    $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+                });
+            } else {
+                console.log("User is logged out");
+                $location.href = ('#/auth/signin');
+            }
+
 
         });

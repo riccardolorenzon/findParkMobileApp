@@ -13,7 +13,7 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
             if (window.StatusBar) {
                 StatusBar.styleDefault();
             }
-
+            $rootScope.user = null;
             $rootScope.userEmail = null;
             $rootScope.baseUrl = 'https://findPark.firebaseio.com/';
             var firebaseRef = new Firebase($rootScope.baseUrl);
@@ -44,10 +44,18 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
             };
 
             $rootScope.checkSession = function() {
-
+                if (typeof $rootScope.user != 'undefined' && $rootScope.user != null)
+                {
+                    $location.href = ('#/parking/map');
+                }
+                else
+                {
+                    $location.href = ('#/auth/signin');
+                }
             }
         });
     });
+
 findParkApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
@@ -64,9 +72,34 @@ findParkApp.config(['$routeProvider',
                 controller: 'mapCtrl'
             }).
             otherwise({
-                redirectTo: '/auth/signin'
+                redirectTo: '/parking/map'
             });
-    }]);
+    }])
+    .run(function($rootScope, $location) {
+    $rootScope.$on('$routeChangeSuccess', function () {
+        if (typeof $rootScope.user != 'undefined' && $rootScope.user != null)
+        {
+            $location.href = ('#/parking/map');
+        }
+        else
+        {
+            $location.href = ('#/auth/signin');
+        }
+        })
+    })
+    .factory('checkSession', function($rootScope, $cookieStore, $http){
+        return function(scope) {
+            if (typeof $rootScope.user != 'undefined' && $rootScope.user != null)
+            {
+                $location.href = ('#/parking/map');
+            }
+            else
+            {
+                $location.href = ('#/auth/signin');
+            }
+        }
+    });
+
 findParkApp.config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
         key: 'AIzaSyDIxE6AbpYr5b5LgCfxcynEnX3e4QZgNjs',
