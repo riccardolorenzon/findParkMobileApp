@@ -53,12 +53,20 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
                     $location.href = ('#/auth/signin');
                 }
             }
+
+            $rootScope.logout = function() {
+                $rootScope.firebaseRef.unauth();
+            }
         });
     });
 
 findParkApp.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
+            when('/', {
+                templateUrl: 'templates/auth-signin.html',
+                controller: 'SignInCtrl'
+            }).
             when('/auth/signin', {
                 templateUrl: 'templates/auth-signin.html',
                 controller: 'SignInCtrl'

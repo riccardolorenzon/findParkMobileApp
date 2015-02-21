@@ -17,6 +17,7 @@
   },
   "cordovaPlugins": [
     "org.apache.cordova.inappbrowser",
-    "https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git"
+    "https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
+    "org.apache.cordova.camera"
   ]
 }
