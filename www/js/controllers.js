@@ -258,6 +258,10 @@ angular.module('findPark.controllers', [])
 
     })
     .controller("ParkStatusCtrl", function($scope) {
+        $scope.parkingLeft = function(){
+            //TODO free the parking spot
+            window.location.href = ("#/parking/map");
+        };
     })
     .controller("ContentCtrl", function($scope, $ionicSideMenuDelegate) {
         $scope.attendees = [
