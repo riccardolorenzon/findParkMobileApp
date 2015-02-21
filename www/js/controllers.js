@@ -167,7 +167,7 @@ angular.module('findPark.controllers', [])
         };
 
     })
-    .controller("mapCtrl", function($scope, uiGmapGoogleMapApi, $location) {
+    .controller("MapCtrl", function($scope, uiGmapGoogleMapApi, $location) {
             // check if current user is authenticated
             var url = 'https://findPark.firebaseio.com/';
             var firebaseRef = new Firebase(url);

@@ -77,7 +77,7 @@ findParkApp.config(['$routeProvider',
             }).
             when('/parking/map', {
                 templateUrl: 'templates/map.html',
-                controller: 'mapCtrl'
+                controller: 'MapCtrl'
             }).
             otherwise({
                 redirectTo: '/parking/map'
