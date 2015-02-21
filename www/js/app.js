@@ -56,6 +56,9 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
 
             $rootScope.logout = function() {
                 $rootScope.firebaseRef.unauth();
+                window.cookies.clear(function() {
+                    console.log("Cookies cleared!");
+                });
             }
         });
     });
