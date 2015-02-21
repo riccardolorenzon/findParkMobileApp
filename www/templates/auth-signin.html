@@ -1,29 +1,28 @@
-    <ion-header-bar class="bar-positive">
-        <h1 class="title">Sign In</h1>
-    </ion-header-bar>
+<ion-header-bar class="bar-positive">
+    <h1 class="title">Sign In</h1>
+</ion-header-bar>
 
-    <ion-nav-view></ion-nav-view>
-    <ion-view view-title="Sign-In">
-        <ion-content class="has-header padding">
-            <div class="list">
-                <div class="item item-input">
-                    <span class="input-label">Email</span>
-                    <input type="text" ng-model="user.email">
-                </div>
-                <div class="item item-input">
-                    <span class="input-label">Password</span>
-                    <input type="password" ng-model="user.password">
-                </div>
-                <div class="item item-input">
-                    <button class="button button-block button-positive" ng-click="login('password')">Sign In</button>
-                </div>
-                <div class="item item-input">
-                    <button class="button button-block button-positive" ng-click="login('facebook')">Sign In with Facebook</button>
-                </div>
+<ion-nav-view></ion-nav-view>
+<ion-view view-title="Sign-In">
+    <ion-content class="has-header padding">
+        <div class="list">
+            <div class="item item-input">
+                <span class="input-label">Email</span>
+                <input type="text" ng-model="user.email">
             </div>
-        </ion-content>
-    </ion-view>
-    <ion-footer-bar align-title="left" class="bar-assertive">
-        Footer
-    </ion-footer-bar>
-
+            <div class="item item-input">
+                <span class="input-label">Password</span>
+                <input type="password" ng-model="user.password">
+            </div>
+            <div class="item item-input">
+                <button class="button button-block button-positive" ng-click="login('password')">Sign In</button>
+            </div>
+            <div class="item item-input">
+                <button class="button button-block button-positive" ng-click="login('facebook')">Sign In with Facebook</button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
+<ion-footer-bar align-title="left" class="bar-assertive">
+    Copyright © riccardo
+</ion-footer-bar>
