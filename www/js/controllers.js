@@ -72,7 +72,7 @@ function chronometer() {
     }
 }
 
-angular.module('findPark.controllers', [])
+angular.module('findPark.controllers', ['ngCookies'])
     .controller('SignUpCtrl', [
         '$scope', '$rootScope', '$firebaseAuth', '$window', '$location',
         function ($scope, $rootScope, $firebaseAuth, $window, $location) {
@@ -112,8 +112,9 @@ angular.module('findPark.controllers', [])
             }
         }
     ])
+
     .controller('SignInCtrl', [
-        '$scope', '$rootScope', '$window', '$firebaseSimpleLogin', '$location',
+        '$scope', '$rootScope', '$window', '$firebaseSimpleLogin', '$location', '$cookies',
         function ($scope, $rootScope, $window, $firebaseSimpleLogin, $location) {
 
             // Logs a user out
@@ -172,8 +173,9 @@ angular.module('findPark.controllers', [])
             function authDataCallback(authData) {
                 if (authData) {
                     $rootScope.user = authData.uid;
+                   // window.localStorage.set("uid", $rootScope.user);
                     $window.location.href = ('#/parking/map');
-
+                    $cookies.uid = authData.uid;
                 }
             }
 
@@ -193,7 +195,8 @@ angular.module('findPark.controllers', [])
             });
         }
     ])
-    .controller('myListCtrl', function($rootScope, $scope, $window, $ionicModal, $firebase, $location) {
+
+    .controller('myListCtrl', function($rootScope, $scope, $window, $ionicModal, $firebase, $location, $cookies) {
         $rootScope.show("Please wait... Processing");
         $scope.list = [];
         var bucketListRef = new Firebase($rootScope.baseUrl + escapeEmailAddress($rootScope.userEmail));
@@ -231,9 +234,9 @@ angular.module('findPark.controllers', [])
             firebase.unauth();
             $location.path("/");
         };
-
     })
-    .controller("MapCtrl", function($scope, $rootScope, uiGmapGoogleMapApi, $location) {
+
+    .controller("MapCtrl", function($scope, $rootScope, uiGmapGoogleMapApi, $location, $cookies) {
             console.log("map controller");
             // check if current user is authenticated
             var url = 'https://findPark.firebaseio.com/';
@@ -242,6 +245,8 @@ angular.module('findPark.controllers', [])
             if (authData) {
                 console.log("User " + authData.uid + " is logged in with " + authData.provider);
                 $rootScope.user = authData.uid;
+                $cookies.uid = authData.uid;
+                //window.localStorage.set("uid", $rootScope.user);
                 uiGmapGoogleMapApi.then(function(maps) {
                     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
                 });
@@ -261,12 +266,14 @@ angular.module('findPark.controllers', [])
                     longitude: 0.00000,
                     status: 'engaged',
                     last_status_change_datetime: current_datetime.toString(),
-                    creation_datetime: current_datetime.toString()
+                    creation_datetime: current_datetime.toString(),
+                    address: 'lombard street 123, SF USA'
                 });
                 window.location.href = ('#/parking/park-status');
             };
     })
-    .controller("ParkStatusCtrl", function($scope) {
+
+    .controller("ParkStatusCtrl", function($scope, $rootScope) {
         $scope.parkingLeft = function(){
             current_datetime = new Date().getUTCDate();
             var firebaseRef = new Firebase('https://findPark.firebaseio.com/web/data/parkingsports');
@@ -278,12 +285,17 @@ angular.module('findPark.controllers', [])
             window.location.href = ("#/parking/map");
         };
     })
-    .controller("ParkHistoryCtrl", function($scope) {
-        $scope.parkingLeft = function(){
-            //TODO free the parking spot
-            window.location.href = ("#/parking/map");
-        };
+
+    .controller("ParkHistoryCtrl", function($scope, $rootScope, $cookies) {
+        $scope.parkingspots = [];
+        var ref = new Firebase(encodeURI("https://findPark.firebaseio.com/web/data/parkingsports/" +  $cookies.uid));
+        ref.on("value", function(parkingspots) {
+            $scope.parkingspots = parkingspots;
+        }, function (errorObject) {
+            console.log("The read failed: " + errorObject.code);
+        });
     })
+
     .controller("ContentCtrl", function($scope, $ionicSideMenuDelegate) {
         $scope.attendees = [
             { firstname: 'Nicolas', lastname: 'Cage' },
