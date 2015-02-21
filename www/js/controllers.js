@@ -233,7 +233,7 @@ angular.module('findPark.controllers', [])
         };
 
     })
-    .controller("MapCtrl", function($scope, uiGmapGoogleMapApi, $location) {
+    .controller("MapCtrl", function($scope, $rootScope, uiGmapGoogleMapApi, $location) {
             console.log("map controller");
             // check if current user is authenticated
             var url = 'https://findPark.firebaseio.com/';
@@ -241,6 +241,7 @@ angular.module('findPark.controllers', [])
             var authData = firebaseRef.getAuth();
             if (authData) {
                 console.log("User " + authData.uid + " is logged in with " + authData.provider);
+                $rootScope.user = authData.uid;
                 uiGmapGoogleMapApi.then(function(maps) {
                     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
                 });
@@ -248,16 +249,36 @@ angular.module('findPark.controllers', [])
                 window.location.href = ('#/auth/signin');
             }
             $scope.parking_left = function(){
-
+                window.location.href = ('#/parking/park-history');
             };
 
             $scope.parking_parked = function(){
+                current_datetime = new Date().getUTCDate();
+                var firebaseRef = new Firebase('https://findPark.firebaseio.com/web/data/parkingsports');
+                var parkingSpotsRef = firebaseRef.child($rootScope.user);
+                parkingSpotsRef.set({
+                    latitude : 0.00000,
+                    longitude: 0.00000,
+                    status: 'engaged',
+                    last_status_change_datetime: current_datetime.toString(),
+                    creation_datetime: current_datetime.toString()
+                });
                 window.location.href = ('#/parking/park-status');
-
             };
-
     })
     .controller("ParkStatusCtrl", function($scope) {
+        $scope.parkingLeft = function(){
+            current_datetime = new Date().getUTCDate();
+            var firebaseRef = new Firebase('https://findPark.firebaseio.com/web/data/parkingsports');
+            var parkingSpotsRef = firebaseRef.child($rootScope.user);
+            parkingSpotsRef.update({
+                status: 'free',
+                last_status_change_datetime: current_datetime.toString()
+            });
+            window.location.href = ("#/parking/map");
+        };
+    })
+    .controller("ParkHistoryCtrl", function($scope) {
         $scope.parkingLeft = function(){
             //TODO free the parking spot
             window.location.href = ("#/parking/map");

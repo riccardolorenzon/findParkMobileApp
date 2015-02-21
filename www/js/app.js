@@ -91,6 +91,11 @@ findParkApp.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "templates/park-status.html",
             controller: "ParkStatusCtrl"
         })
+        .state('park-history', {
+            url: "/parking/park-history",
+            templateUrl: "templates/park-history.html",
+            controller: "ParkHistoryCtrl"
+        })
         $urlRouterProvider.otherwise("/parking/map");
     })
     .run(function($rootScope, $location) {
