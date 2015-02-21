@@ -1,9 +1,4 @@
-<ion-header-bar class="bar-positive">
-    <h1 class="title">Sign In</h1>
-</ion-header-bar>
-
-<ion-nav-view></ion-nav-view>
-<ion-view view-title="Sign-In">
+<ion-view view-title="sign in">
     <ion-content class="has-header padding">
         <div class="list">
             <div class="item item-input">
@@ -15,14 +10,14 @@
                 <input type="password" ng-model="user.password">
             </div>
             <div class="item item-input">
-                <button class="button button-block button-positive" ng-click="login('password')">Sign In</button>
+                <button class="button button-block button-light" ng-click="login('password')">Sign In</button>
             </div>
             <div class="item item-input">
                 <button class="button button-block button-positive" ng-click="login('facebook')">Sign In with Facebook</button>
             </div>
+            <div class="item item-input">
+                <button class="button button-block button-positive" ng-click="login('twitter')">Sign In with Twitter</button>
+            </div>
         </div>
     </ion-content>
 </ion-view>
-<ion-footer-bar align-title="left" class="bar-assertive">
-    Copyright © riccardo
-</ion-footer-bar>

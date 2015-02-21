@@ -1,11 +1,9 @@
-<ion-header-bar class="bar-positive">
-    <h1 class="title">Parking map</h1>
-</ion-header-bar>
-<ion-content class="has-header padding" has-tabs="true">
-
-    <button class="button button-clear" ng-click="logout()">Logout</button>
-        <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
-</ion-content>
-<ion-footer-bar align-title="left" class="bar-assertive">
-    Copyright © riccardo
-</ion-footer-bar>
+<ion-view view-title="parking map">
+    <ion-content class="has-header padding" has-tabs="true">
+            <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+            <div class="item item-input">
+                <button class="button button-block button-calm" ng-click="parking_left()">Left!</button>
+                <button class="button button-block button-positive" ng-click="parking_parked()">Parked!</button>
+            </div>
+    </ion-content>
+</ion-view>

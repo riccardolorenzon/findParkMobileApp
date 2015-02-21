@@ -60,39 +60,41 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
         });
     });
 
-findParkApp.config(['$routeProvider',
-    function($routeProvider) {
-        $routeProvider.
-            when('/', {
-                templateUrl: 'templates/auth-signin.html',
-                controller: 'SignInCtrl'
-            }).
-            when('/auth/signin', {
-                templateUrl: 'templates/auth-signin.html',
-                controller: 'SignInCtrl'
-            }).
-            when('/signup', {
-                templateUrl: 'templates/auth-signup.html',
-                controller: 'SignUpCtrl'
-            }).
-            when('/parking/map', {
-                templateUrl: 'templates/map.html',
-                controller: 'MapCtrl'
-            }).
-            otherwise({
-                redirectTo: '/parking/map'
-            });
-    }])
+findParkApp.config(function($stateProvider, $urlRouterProvider) {
+
+    $stateProvider
+        .state('home', {
+            url: "/",
+            templateUrl: "templates/map.html",
+            controller: "MapCtrl"
+        })
+        .state('signin', {
+            url: "/auth/signin",
+            templateUrl: "templates/auth-signin.html",
+            controller: "SignInCtrl"
+        })
+        .state('signout', {
+            url: "/auth/signup",
+            templateUrl: "templates/auth-signup.html",
+            controller: "SignUpCtrl"
+        })
+        .state('map', {
+            url: "/parking/map",
+            templateUrl: "templates/map.html",
+            controller: "MapCtrl"
+        })
+        $urlRouterProvider.otherwise("/parking/map");
+    })
     .run(function($rootScope, $location) {
-    $rootScope.$on('$routeChangeSuccess', function () {
-        if (typeof $rootScope.user != 'undefined' && $rootScope.user != null)
-        {
-            $location.href = ('#/parking/map');
-        }
-        else
-        {
-            $location.href = ('#/auth/signin');
-        }
+        $rootScope.$on('$routeChangeSuccess', function () {
+            if (typeof $rootScope.user != 'undefined' && $rootScope.user != null)
+            {
+                $location.href = ('#/parking/map');
+            }
+            else
+            {
+                $location.href = ('#/auth/signin');
+            }
         })
     })
     .factory('checkSession', function($rootScope, $cookieStore, $http){

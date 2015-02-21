@@ -39,11 +39,15 @@
 
   </head>
   <body ng-app="findPark" animation="slide-left-right-ios7">
-  <ion-nav-bar class="bar-stable nav-title-slide-ios7">
-      <ion-nav-back-button class="button-icon icon ion-chevron-left">
-          Back
-      </ion-nav-back-button>
-  </ion-nav-bar>
-  <div ng-view></div>
+      <ion-nav-bar class="bar-assertive">
+          <ion-nav-back-button>
+              Back
+          </ion-nav-back-button>
+      </ion-nav-bar>
+      <ion-nav-view>
+      </ion-nav-view>
+      <ion-footer-bar align-title="left" class="bar-assertive">
+          Copyright © riccardo
+      </ion-footer-bar>
   </body>
 </html>

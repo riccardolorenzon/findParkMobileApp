@@ -168,6 +168,7 @@ angular.module('findPark.controllers', [])
 
     })
     .controller("MapCtrl", function($scope, uiGmapGoogleMapApi, $location) {
+            console.log("map controller");
             // check if current user is authenticated
             var url = 'https://findPark.firebaseio.com/';
             var firebaseRef = new Firebase(url);
@@ -178,9 +179,12 @@ angular.module('findPark.controllers', [])
                     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
                 });
             } else {
-                console.log("User is logged out");
-                $location.href = ('#/auth/signin');
+                window.location.href = ('#/auth/signin');
             }
+            $scope.parking_left = function(){
+                window.location.href = ('#/parking');
+            };
 
+            $scope.parking_parked = function(){};
 
-        });
+    });
