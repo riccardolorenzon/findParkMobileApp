@@ -237,40 +237,79 @@ angular.module('findPark.controllers', ['ngCookies'])
     })
 
     .controller("MapCtrl", function($scope, $rootScope, uiGmapGoogleMapApi, $location, $cookies) {
-            console.log("map controller");
-            // check if current user is authenticated
-            var url = 'https://findPark.firebaseio.com/';
-            var firebaseRef = new Firebase(url);
-            var authData = firebaseRef.getAuth();
-            if (authData) {
-                console.log("User " + authData.uid + " is logged in with " + authData.provider);
-                $rootScope.user = authData.uid;
-                $cookies.uid = authData.uid;
-                //window.localStorage.set("uid", $rootScope.user);
-                uiGmapGoogleMapApi.then(function(maps) {
-                    $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-                });
-            } else {
-                window.location.href = ('#/auth/signin');
-            }
-            $scope.parking_left = function(){
-                window.location.href = ('#/parking/park-history');
-            };
+        // check if current user is authenticated
+        var url = 'https://findPark.firebaseio.com/';
+        var firebaseRef = new Firebase(url);
+        var authData = firebaseRef.getAuth();
+        if (authData) {
+            console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            $rootScope.user = authData.uid;
+            $cookies.uid = authData.uid;
+            //window.localStorage.set("uid", $rootScope.user);
+            uiGmapGoogleMapApi.then(function(maps) {
+                $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+            });
+        } else {
+            window.location.href = ('#/auth/signin');
+        }
+        $scope.parking_left = function(){
+            window.location.href = ('#/parking/park-history');
+        };
 
-            $scope.parking_parked = function(){
-                current_datetime = new Date().getUTCDate();
-                var firebaseRef = new Firebase('https://findPark.firebaseio.com/web/data/parkingsports');
-                var parkingSpotsRef = firebaseRef.child($rootScope.user);
-                parkingSpotsRef.set({
-                    latitude : 0.00000,
-                    longitude: 0.00000,
-                    status: 'engaged',
-                    last_status_change_datetime: current_datetime.toString(),
-                    creation_datetime: current_datetime.toString(),
-                    address: 'lombard street 123, SF USA'
-                });
-                window.location.href = ('#/parking/park-status');
-            };
+        $scope.parking_parked = function(){
+            current_datetime = new Date().getUTCDate();
+            var firebaseRef = new Firebase('https://findPark.firebaseio.com/web/data/parkingsports');
+            var parkingSpotsRef = firebaseRef.child($rootScope.user);
+            parkingSpotsRef.set({
+                latitude : 0.00000,
+                longitude: 0.00000,
+                status: 'engaged',
+                last_status_change_datetime: current_datetime.toString(),
+                creation_datetime: current_datetime.toString(),
+                address: 'lombard street 123, SF USA'
+            });
+            window.location.href = ('#/parking/park-status');
+        };
+
+        $scope.showPosition = function (position) {
+            $scope.lat = position.coords.latitude;
+            $scope.lng = position.coords.longitude;
+            $scope.accuracy = position.coords.accuracy;
+            $scope.$apply();
+
+            var latlng = new google.maps.LatLng($scope.lat, $scope.lng);
+            $scope.model.myMap.setCenter(latlng);
+            $scope.myMarkers.push(new google.maps.Marker({ map: $scope.model.myMap, position: latlng }));
+        };
+
+        $scope.showError = function (error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    $scope.error = "User denied the request for Geolocation."
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    $scope.error = "Location information is unavailable."
+                    break;
+                case error.TIMEOUT:
+                    $scope.error = "The request to get user location timed out."
+                    break;
+                case error.UNKNOWN_ERROR:
+                    $scope.error = "An unknown error occurred."
+                    break;
+            }
+            $scope.$apply();
+        }
+
+        $scope.getLocation = function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition($scope.showPosition, $scope.showError);
+            }
+            else {
+                $scope.error = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        $scope.getLocation();
     })
 
     .controller("ParkStatusCtrl", function($scope, $rootScope) {
