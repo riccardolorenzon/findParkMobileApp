@@ -242,7 +242,6 @@ angular.module('findPark.controllers', ['ngCookies'])
         var firebaseRef = new Firebase(url);
         var authData = firebaseRef.getAuth();
         if (authData) {
-            console.log("User " + authData.uid + " is logged in with " + authData.provider);
             $rootScope.user = authData.uid;
             $cookies.uid = authData.uid;
             //window.localStorage.set("uid", $rootScope.user);
@@ -272,7 +271,6 @@ angular.module('findPark.controllers', ['ngCookies'])
         $scope.showPosition = function (position) {
             $scope.lat = position.coords.latitude;
             $scope.lng = position.coords.longitude;
-            console.log('lat ' + $scope.lat + ' lng ' + $scope.lng);
             $scope.accuracy = position.coords.accuracy;
             $scope.$apply();
             var latlng = new google.maps.LatLng($scope.lat, $scope.lng);
