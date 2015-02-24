@@ -72,6 +72,7 @@ function chronometer() {
     }
 }
 
+
 angular.module('findPark.controllers', ['ngCookies'])
     .controller('SignUpCtrl', [
         '$scope', '$rootScope', '$firebaseAuth', '$window', '$location',

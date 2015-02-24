@@ -5,6 +5,7 @@ var findParkApp = angular.module('findPark', ['ionic', 'firebase', 'findPark.con
 
     .run(function($ionicPlatform, $rootScope, $firebase, $window, $ionicLoading, $firebaseSimpleLogin) {
         $ionicPlatform.ready(function() {
+            console.log('inizio inferno');
             if (window.cordova && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
             }
