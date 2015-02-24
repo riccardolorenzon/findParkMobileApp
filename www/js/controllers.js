@@ -277,7 +277,12 @@ angular.module('findPark.controllers', ['ngCookies'])
             $scope.$apply();
             var latlng = new google.maps.LatLng($scope.lat, $scope.lng);
             $scope.map = { center: { latitude: $scope.lat, longitude: $scope.lng }, zoom: 16 };
-            $scope.marker = new google.maps.Marker({ map: $scope.map, position: latlng });
+            $scope.marker = {
+                id:0,
+                coords: {
+                    latitude: $scope.lat,
+                    longitude: $scope.lng
+            },};
         };
 
         $scope.showError = function (error) {
