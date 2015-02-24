@@ -246,9 +246,7 @@ angular.module('findPark.controllers', ['ngCookies'])
             $rootScope.user = authData.uid;
             $cookies.uid = authData.uid;
             //window.localStorage.set("uid", $rootScope.user);
-            uiGmapGoogleMapApi.then(function(maps) {
-                $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-            });
+
         } else {
             window.location.href = ('#/auth/signin');
         }
@@ -274,12 +272,12 @@ angular.module('findPark.controllers', ['ngCookies'])
         $scope.showPosition = function (position) {
             $scope.lat = position.coords.latitude;
             $scope.lng = position.coords.longitude;
+            console.log('lat ' + $scope.lat + ' lng ' + $scope.lng);
             $scope.accuracy = position.coords.accuracy;
             $scope.$apply();
-
             var latlng = new google.maps.LatLng($scope.lat, $scope.lng);
-            $scope.model.myMap.setCenter(latlng);
-            $scope.myMarkers.push(new google.maps.Marker({ map: $scope.model.myMap, position: latlng }));
+            $scope.map = { center: { latitude: $scope.lat, longitude: $scope.lng }, zoom: 16 };
+            $scope.marker = new google.maps.Marker({ map: $scope.map, position: latlng });
         };
 
         $scope.showError = function (error) {
